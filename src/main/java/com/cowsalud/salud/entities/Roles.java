@@ -1,7 +1,7 @@
 package com.cowsalud.salud.entities;
 
 public enum Roles {
-    ADMIN,
     PATIENT,
-    DOCTOR
+    DOCTOR,
+    CHIEF_DOCTOR
 }

@@ -9,5 +9,4 @@ public class CowSaludEpsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CowSaludEpsApplication.class, args);
 	}
-
 }

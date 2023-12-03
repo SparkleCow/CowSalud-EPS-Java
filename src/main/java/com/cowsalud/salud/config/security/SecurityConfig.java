@@ -1,6 +1,7 @@
 package com.cowsalud.salud.config.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,22 +14,34 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.cowsalud.salud.repositories.UserRepository;
+import com.cowsalud.salud.entities.doctors.Doctor;
+import com.cowsalud.salud.entities.patients.Patient;
+import com.cowsalud.salud.repositories.DoctorRepository;
+import com.cowsalud.salud.repositories.PatientRepository;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserRepository userRepository;
+    private final DoctorRepository doctorRepository;
+    private final PatientRepository patientRepository;
     
     @Bean
     public UserDetailsService UserDetailsServiceImp(){
         return new UserDetailsService(){
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
-                return userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-            }
+                Optional<Doctor> doctorOpt = doctorRepository.findByEmail(username);
+                if(doctorOpt.isPresent()){
+                    return doctorOpt.get();
+                }
+                Optional<Patient> patientOpt = patientRepository.findByEmail(username);
+                if(patientOpt.isPresent()){
+                    return patientOpt.get();
+                }
+                throw new UsernameNotFoundException("No se encontro el usuario con las credenciales proporcionadas");
+            }     
         };
     }
 
@@ -44,7 +57,6 @@ public class SecurityConfig {
     public AuthenticationManager AuthenticationManagerImp(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder(){
