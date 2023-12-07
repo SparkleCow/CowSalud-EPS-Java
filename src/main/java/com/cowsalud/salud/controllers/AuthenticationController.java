@@ -20,23 +20,44 @@ import com.cowsalud.salud.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+/* 
+Controlador para la creación de entidades del tipo doctor y patient y su respectivo logueo.
+*/
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
     private final UserService userService;
-    
+
+    /*
+    Gestión de la creación de doctores del con roles del tipo doctor y chief doctor (Doctor Jefe)
+    */
+
     @PostMapping("/doctor")
     public ResponseEntity<ResponseDoctor> createDoctor(@Valid @RequestBody RequestDoctor doctorDto){
         return ResponseEntity.ok().body(userService.createDoctor(doctorDto));
     }
+
+    @PostMapping("/chief")
+    public ResponseEntity<ResponseDoctor> createChiefDoctor(@Valid @RequestBody RequestDoctor doctorDto){
+        return ResponseEntity.ok().body(userService.createChiefDoctor(doctorDto));
+    }
+
+    /* 
+    Creación de pacientes
+    */
 
     @PostMapping("/patient")
     public ResponseEntity<ResponsePatient> createPatient(@Valid @RequestBody RequestPatient patient){
         return ResponseEntity.ok().body(userService.createPatient(patient));
     } 
 
+    /*
+    Manejo de inicio de sesión de pacientes y doctores
+    */
+    
     @PostMapping("/login")
     public ResponseEntity<ResponseAuth> loginUser(@Valid @RequestBody RequestAuth authDto){
         try{

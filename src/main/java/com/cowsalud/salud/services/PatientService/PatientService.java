@@ -4,13 +4,14 @@ import java.util.List;
 
 import com.cowsalud.salud.entities.patients.Patient;
 import com.cowsalud.salud.entities.patients.UpdatePatient;
+import com.cowsalud.salud.exceptions.PatientNotFound;
 
 public interface PatientService {
     
     List<Patient> findAllPatients();
     List<Patient> findAllEnablePatients();
-    Patient findPatientById(Long id);
-    Patient findPatientByEmail(String email);
-    Patient updatePatientById(Long id, UpdatePatient updatePatient);
-    void deletePatientById(Long id);
+    Patient findPatientById(Long id) throws PatientNotFound;
+    Patient findPatientByEmail(String email) throws PatientNotFound;
+    Patient updatePatientById(Long id, UpdatePatient updatePatient) throws PatientNotFound;
+    Patient deletePatientById(Long id) throws PatientNotFound;
 }

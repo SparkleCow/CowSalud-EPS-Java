@@ -1,5 +1,6 @@
 package com.cowsalud.salud.entities.patients;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -8,12 +9,17 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.cowsalud.salud.entities.Roles;
+import com.cowsalud.salud.entities.appointments.Appointment;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import lombok.EqualsAndHashCode;
@@ -31,7 +37,8 @@ import lombok.ToString;
 public class Patient implements UserDetails{
 
     @Id
-    private Long id;
+    @Column(name = "id_patient")
+    private Long idPatient;
     @Column(name="first_name")
     private String firstName;
     @Column(name="last_name")
@@ -45,9 +52,12 @@ public class Patient implements UserDetails{
     private Integer status = 1;
     @Enumerated(EnumType.STRING)
     private Roles roles = Roles.PATIENT;
+    @JsonIgnore
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Appointment> appointments = new ArrayList<Appointment>();
 
     public Patient(Long id, String firstName, String lastName, String email, Integer age, Long phone, String password) {
-        this.id = id;
+        this.idPatient = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -88,5 +98,27 @@ public class Patient implements UserDetails{
     public boolean isEnabled() {
         if(status==0)return false;
         return true;
+    }
+
+    public Patient update(UpdatePatient updatePatient) {
+        if (updatePatient.age() != null) {
+            this.setAge(updatePatient.age());
+        }
+        if (updatePatient.firstName() != null) {
+            this.setFirstName(updatePatient.firstName());
+        }
+        if (updatePatient.lastName() != null) {
+            this.setLastName(updatePatient.lastName());
+        }
+        if (updatePatient.email() != null) {
+            this.setEmail(updatePatient.email());
+        }
+        if (updatePatient.phone() != null) {
+            this.setPhone(updatePatient.phone());
+        }
+        if (updatePatient.password() != null) {
+            this.setPassword(updatePatient.password());
+        }
+        return this; 
     }
 }

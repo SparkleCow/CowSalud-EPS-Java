@@ -1,7 +1,6 @@
 package com.cowsalud.salud.services.PatientService;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -35,21 +34,21 @@ public class PatientServiceImp implements PatientService{
     }
 
     @Override
-    public Patient findPatientByEmail(String email) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findPatientByEmail'");
+    public Patient findPatientByEmail(String email) throws PatientNotFound {
+        return patientRepository.findByEmail(email).orElseThrow(() -> new PatientNotFound("Paciente no encontrado con el email proporcionado."));
     }
 
     @Override
-    public Patient updatePatientById(Long id, UpdatePatient updatePatient) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updatePatientById'");
+    public Patient updatePatientById(Long id, UpdatePatient updatePatient) throws PatientNotFound {
+        Patient patient = patientRepository.findById(id).orElseThrow(() -> new PatientNotFound("Paciente no encontrado con el ID proporcionado."));
+        return patientRepository.save(patient.update(updatePatient));
     }
 
     @Override
-    public void deletePatientById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deletePatientById'");
+    public Patient deletePatientById(Long id) throws PatientNotFound {
+        System.out.print("holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas");
+        patientRepository.logicDeleteById(id);
+        System.out.print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas");
+        return patientRepository.findById(id).orElseThrow(() -> new PatientNotFound("Paciente no encontrado con el ID proporcionado."));
     }
-    
 }

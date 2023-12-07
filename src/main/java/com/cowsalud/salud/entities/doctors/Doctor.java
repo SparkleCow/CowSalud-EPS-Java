@@ -1,7 +1,9 @@
 package com.cowsalud.salud.entities.doctors;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -9,14 +11,19 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.cowsalud.salud.entities.Roles;
+import com.cowsalud.salud.entities.appointments.Appointment;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import lombok.EqualsAndHashCode;
@@ -35,7 +42,8 @@ public class Doctor implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(name = "id_doctor")
+    private Long idDoctor;
     @Column(name="first_name")
     private String firstName;
     @Column(name="last_name")
@@ -51,6 +59,9 @@ public class Doctor implements UserDetails{
     private Integer doctorOffice;
     @Enumerated(EnumType.STRING)
     private Set<Roles> roles = new HashSet<Roles>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Appointment> appointments = new ArrayList<Appointment>();
 
     public Doctor(String firstName, String lastName, String email, Long phone, String password, String specialty, Integer doctorOffice, Set<Roles> roles) {
         this.firstName = firstName;
@@ -89,5 +100,27 @@ public class Doctor implements UserDetails{
     public boolean isEnabled() {
         if(status==0)return false;
         return true;
+    }
+
+    public Doctor update(UpdateDoctor updateDoctor) {
+        if (updateDoctor.firstName() != null) {
+            this.setFirstName(updateDoctor.firstName());
+        }
+        if (updateDoctor.lastName() != null) {
+            this.setLastName(updateDoctor.lastName());
+        }
+        if (updateDoctor.email() != null) {
+            this.setEmail(updateDoctor.email());
+        }
+        if (updateDoctor.phone() != null) {
+            this.setPhone(updateDoctor.phone());
+        }
+        if (updateDoctor.password() != null) {
+            this.setPassword(updateDoctor.password());
+        }
+        if (updateDoctor.doctorOffice() != null) {
+            this.setDoctorOffice(updateDoctor.doctorOffice());
+        }
+        return this; 
     }
 }
