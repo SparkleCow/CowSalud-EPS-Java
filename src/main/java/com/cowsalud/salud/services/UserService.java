@@ -23,7 +23,7 @@ import com.cowsalud.salud.entities.patients.RequestPatient;
 import com.cowsalud.salud.entities.patients.ResponsePatient;
 import com.cowsalud.salud.repositories.DoctorRepository;
 import com.cowsalud.salud.repositories.PatientRepository;
-
+import com.cowsalud.salud.services.Util.Mapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,17 +36,15 @@ public class UserService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final Mapper mapper;
 
     /*
         Manejo de la creación de pacientes
     */
 
     public ResponsePatient createPatient(RequestPatient patientDto){
-        Patient patient = patientRepository.save(new Patient(patientDto.id(), patientDto.firstName(), patientDto.lastName(), 
-            patientDto.email(), patientDto.age(), patientDto.phone(), passwordEncoder.encode(patientDto.password())));
-
-        return new ResponsePatient(patient.getIdPatient(), patient.getFirstName(), patient.getLastName(), 
-            patient.getEmail(), patient.getAge(), patient.getPhone(), patient.getStatus(), patient.getRoles());
+        Patient patient = mapper.patientRequestConvert(patientDto);
+        return mapper.patientResponseConvert(patientRepository.save(patient));
     }
 
     /*
@@ -56,12 +54,8 @@ public class UserService {
     public ResponseDoctor createDoctor(RequestDoctor doctorDto){
         Set<Roles> roles = new HashSet<>();
         roles.add(Roles.DOCTOR);
-        Doctor doctor = doctorRepository.save(new Doctor(doctorDto.firstName(), doctorDto.lastName(), doctorDto.email(), doctorDto.phone(), 
-            passwordEncoder.encode(doctorDto.password()), doctorDto.specialty(),doctorDto.doctorOffice(), roles));
-        System.out.println(doctor.toString());
-        
-        return new ResponseDoctor(doctor.getFirstName(), doctor.getLastName(), 
-            doctor.getEmail(), doctor.getSpecialty(), doctor.getDoctorOffice(), doctor.getRoles());
+        Doctor doctor = mapper.doctorRequestConvert(doctorDto, roles);
+        return mapper.doctorResponseConvert(doctorRepository.save(doctor));
     }
 
     public ResponseDoctor createChiefDoctor(RequestDoctor doctorDto){
@@ -70,7 +64,6 @@ public class UserService {
         roles.add(Roles.CHIEF_DOCTOR);
         Doctor doctor = doctorRepository.save(new Doctor(doctorDto.firstName(), doctorDto.lastName(), doctorDto.email(), doctorDto.phone(), 
             passwordEncoder.encode(doctorDto.password()), doctorDto.specialty(),doctorDto.doctorOffice(), roles));
-        System.out.println(doctor.toString());
         
         return new ResponseDoctor(doctor.getFirstName(), doctor.getLastName(), 
             doctor.getEmail(), doctor.getSpecialty(), doctor.getDoctorOffice(), doctor.getRoles());
