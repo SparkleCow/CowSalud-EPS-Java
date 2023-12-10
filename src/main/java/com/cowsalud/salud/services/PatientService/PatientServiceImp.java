@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.cowsalud.salud.entities.appointments.Appointment;
 import com.cowsalud.salud.entities.patients.Patient;
 import com.cowsalud.salud.entities.patients.UpdatePatient;
 import com.cowsalud.salud.exceptions.PatientNotFound;
@@ -50,5 +51,11 @@ public class PatientServiceImp implements PatientService{
         patientRepository.logicDeleteById(id);
         System.out.print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas");
         return patientRepository.findById(id).orElseThrow(() -> new PatientNotFound("Paciente no encontrado con el ID proporcionado."));
+    }
+
+    @Override
+    public List<Appointment> findAllAppointmentById(Long id) throws PatientNotFound {
+        Patient patient = patientRepository.findById(id).orElseThrow(() -> new PatientNotFound("Paciente no encontrado con el ID proporcionado."));
+        return patient.getAppointments();
     }
 }

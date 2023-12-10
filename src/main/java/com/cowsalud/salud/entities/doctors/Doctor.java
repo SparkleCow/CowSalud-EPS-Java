@@ -60,7 +60,7 @@ public class Doctor implements UserDetails{
     @Enumerated(EnumType.STRING)
     private Set<Roles> roles = new HashSet<Roles>();
     @JsonIgnore
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "doctor", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private List<Appointment> appointments = new ArrayList<Appointment>();
 
     public Doctor(String firstName, String lastName, String email, Long phone, String password, String specialty, Integer doctorOffice, Set<Roles> roles) {

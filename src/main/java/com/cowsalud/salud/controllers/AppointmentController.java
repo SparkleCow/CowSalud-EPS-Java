@@ -7,6 +7,7 @@ import com.cowsalud.salud.entities.appointments.AppointmentDto;
 import com.cowsalud.salud.entities.appointments.AppointmentId;
 import com.cowsalud.salud.entities.doctors.Doctor;
 import com.cowsalud.salud.entities.patients.Patient;
+import com.cowsalud.salud.exceptions.AppointmentNotFound;
 import com.cowsalud.salud.exceptions.DoctorNotFound;
 import com.cowsalud.salud.exceptions.PatientNotFound;
 import com.cowsalud.salud.services.DoctorService.DoctorService;
@@ -16,13 +17,15 @@ import com.cowsalud.salud.services.appointmentService.AppointmentService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +36,11 @@ public class AppointmentController {
     private final DoctorService doctorService;
     private final PatientService patientService;
     private final Mapper mapper;
+
+    @GetMapping
+    public List<Appointment> findAllAppointment() {
+        return appointmentService.findAll();
+    }
     
     @PostMapping
     public ResponseEntity<?> createAppointment(@RequestBody AppointmentId appointmentId) {
@@ -50,4 +58,15 @@ public class AppointmentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente no encontrado con el ID proporcionado");
         }
     }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteAppointment(@RequestBody AppointmentId appointmentId){
+        try {
+            appointmentService.deleteAppointmentById(appointmentId);
+            return ResponseEntity.noContent().build();
+        } catch (AppointmentNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cita no encontrada con la información proporcionada");
+        }
+    } 
 }
+

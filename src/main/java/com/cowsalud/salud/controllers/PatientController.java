@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cowsalud.salud.entities.appointments.Appointment;
+import com.cowsalud.salud.entities.appointments.AppointmentDto;
 import com.cowsalud.salud.entities.patients.Patient;
 import com.cowsalud.salud.entities.patients.ResponsePatient;
 import com.cowsalud.salud.entities.patients.UpdatePatient;
 import com.cowsalud.salud.exceptions.PatientNotFound;
 import com.cowsalud.salud.services.PatientService.PatientService;
+import com.cowsalud.salud.services.Util.Mapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,8 +31,9 @@ import lombok.RequiredArgsConstructor;
 public class PatientController {
 
     private final PatientService patientService;
+    private final Mapper mapper;
     
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<ResponsePatient>> findAllPatients(){
         return ResponseEntity.ok().body(patientService.findAllPatients().stream().map( patient -> 
             new ResponsePatient(patient.getIdPatient(), patient.getFirstName(),
@@ -101,6 +105,17 @@ public class PatientController {
             return ResponseEntity.internalServerError().body("Error del servidor, intentelo más tarde");
         }
     }
+
+    @GetMapping("/appointment/{id}")
+    public ResponseEntity<?> findPatientAppointments(@PathVariable Long id) {
+        try {
+            List<Appointment> appointments = patientService.findAllAppointmentById(id);
+            List<AppointmentDto> appointmentDtos = appointments.stream().map(appointment -> mapper.appointmentDtoConvert(appointment)).toList();
+            return ResponseEntity.ok().body(appointmentDtos);
+        } catch (PatientNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente no encontrado con el ID proporcionado");
+        }
+    }   
 }
 
     

@@ -51,9 +51,10 @@ public class Patient implements UserDetails{
     private String password;
     private Integer status = 1;
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(50)")
     private Roles roles = Roles.PATIENT;
     @JsonIgnore
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "patient", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private List<Appointment> appointments = new ArrayList<Appointment>();
 
     public Patient(Long id, String firstName, String lastName, String email, Integer age, Long phone, String password) {

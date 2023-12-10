@@ -12,6 +12,7 @@ public interface DoctorService {
     List<Doctor> findAllEnableDoctors();
     List<Doctor> findDoctorBySpecialty(String specialty);
     List<Appointment> findAllAppointmentById(Long id) throws DoctorNotFound;
+    
     Doctor findDoctorById(Long id) throws DoctorNotFound;
     Doctor findDoctorByEmail(String email) throws DoctorNotFound;
     Doctor updateDoctorById(Long id, UpdateDoctor updateDoctor) throws DoctorNotFound;

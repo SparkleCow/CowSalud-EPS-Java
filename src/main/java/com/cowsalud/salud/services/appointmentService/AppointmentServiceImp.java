@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.cowsalud.salud.entities.appointments.Appointment;
 import com.cowsalud.salud.entities.appointments.AppointmentId;
+import com.cowsalud.salud.exceptions.AppointmentNotFound;
 import com.cowsalud.salud.repositories.AppointmentRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,15 +23,8 @@ public class AppointmentServiceImp implements AppointmentService{
     }
 
     @Override
-    public List<Appointment> findAllByPatientId(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAllByPatientId'");
-    }
-
-    @Override
-    public Appointment findById(AppointmentId appointmentId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+    public Appointment findById(AppointmentId appointmentId) throws AppointmentNotFound {
+        return appointmentRepository.findById(appointmentId).orElseThrow(() -> new AppointmentNotFound("Cita no encontrada con el ID proporcionado"));
     }
 
     @Override
@@ -39,14 +33,8 @@ public class AppointmentServiceImp implements AppointmentService{
     }
 
     @Override
-    public Appointment updateAppointmentById(AppointmentId id, AppointmentId newAppointment) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateAppointmentById'");
-    }
-
-    @Override
-    public Appointment deleteAppointmentById(AppointmentId id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteAppointmentById'");
+    public void deleteAppointmentById(AppointmentId appointmentId) throws AppointmentNotFound {
+        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> new AppointmentNotFound("Cita no encontrada con el ID proporcionado"));
+        appointmentRepository.delete(appointment);
     }
 }

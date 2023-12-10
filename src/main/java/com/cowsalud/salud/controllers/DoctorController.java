@@ -33,7 +33,7 @@ public class DoctorController {
     private final DoctorService doctorService;
     private final Mapper mapper;
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<ResponseDoctor>> findAllDoctors(){
         return ResponseEntity.ok().body(doctorService.findAllDoctors().stream().map( doctor -> mapper.doctorResponseConvert(doctor)).toList());
     }
@@ -100,7 +100,7 @@ public class DoctorController {
     public ResponseEntity<?> findDoctorAppointments(@PathVariable Long id) {
         try {
             List<Appointment> appointments = doctorService.findAllAppointmentById(id);
-            List<AppointmentDto> appointmentDtos = appointments.stream().map(appointment -> mapper.appointmentDtoConvert(appointment)).toList();
+            List<AppointmentDto> appointmentDtos = appointments.stream().map(mapper::appointmentDtoConvert).toList();
             return ResponseEntity.ok().body(appointmentDtos);
         } catch (DoctorNotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doctor no encontrado con el ID proporcionado");
