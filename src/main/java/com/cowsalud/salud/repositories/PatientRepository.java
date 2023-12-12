@@ -22,6 +22,6 @@ public interface PatientRepository extends JpaRepository<Patient, Long>{
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE patient SET status = 0 WHERE id = :id", nativeQuery = true)
+    @Query(value = "UPDATE patient SET status = 0 WHERE id_patient = :id", nativeQuery = true)
     void logicDeleteById(@Param("id") Long id);
 }

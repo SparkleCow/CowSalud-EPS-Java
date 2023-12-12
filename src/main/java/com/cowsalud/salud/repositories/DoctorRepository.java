@@ -20,7 +20,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long>{
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE doctor SET status = 0 WHERE id = :id", nativeQuery = true)
+    @Query(value = "UPDATE doctor SET status = 0 WHERE id_doctor = :id", nativeQuery = true)
     void logicDeleteById(@Param("id") Long id);
 
     @Query(value = "SELECT * FROM doctor WHERE LOWER(specialty) LIKE LOWER(CONCAT('%', :specialty, '%'))", nativeQuery = true)

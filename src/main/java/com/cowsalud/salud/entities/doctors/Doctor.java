@@ -58,6 +58,7 @@ public class Doctor implements UserDetails{
     @Column(name = "doctor_office")
     private Integer doctorOffice;
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(50)")
     private Set<Roles> roles = new HashSet<Roles>();
     @JsonIgnore
     @OneToMany(mappedBy = "doctor", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
